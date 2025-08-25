@@ -1,0 +1,163 @@
+# 간단한 쇼핑몰 프로젝트 - Cursor AI 설정
+
+## 프로젝트 개요
+- 아주 간단한 쇼핑몰 (상품 CRUD만)
+- Backend: Spring Boot + Java 17 + Gradle + PostgreSQL
+- Frontend: React
+- Docker Compose로 개발환경 구성
+- backend, frontend 폴더로 분리
+
+## 프로젝트 구조
+```
+simple-shop/
+├── backend/
+│   ├── src/main/java/com/shop/
+│   │   ├── ShopApplication.java
+│   │   ├── controller/ProductController.java
+│   │   ├── entity/Product.java
+│   │   ├── repository/ProductRepository.java
+│   │   ├── service/ProductService.java
+│   │   └── config/CorsConfig.java
+│   ├── src/main/resources/
+│   │   └── application.yml
+│   ├── build.gradle
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ProductList.js
+│   │   │   └── ProductForm.js
+│   │   ├── services/api.js
+│   │   ├── App.js
+│   │   └── index.js
+│   ├── package.json
+│   └── Dockerfile
+├── docker-compose.yml
+├── .gitignore
+└── README.md
+```
+
+## 기술 스택
+- **Backend**: Spring Boot 3.x, Java 17, Gradle, JPA, PostgreSQL
+- **Frontend**: React 18, Axios
+- **Database**: PostgreSQL 15
+- **Container**: Docker, Docker Compose
+
+## 상품 엔티티 구조
+```java
+Product {
+    Long id;
+    String name;        // 상품명
+    String description; // 상품 설명  
+    BigDecimal price;   // 가격
+    LocalDateTime createdAt;
+}
+```
+
+## API 엔드포인트
+- `GET /api/products` - 전체 상품 조회
+- `GET /api/products/{id}` - 특정 상품 조회
+- `POST /api/products` - 상품 생성
+- `PUT /api/products/{id}` - 상품 수정
+- `DELETE /api/products/{id}` - 상품 삭제
+
+## React 컴포넌트
+- **ProductList**: 상품 목록 표시 + 삭제 기능
+- **ProductForm**: 상품 추가/수정 폼
+- **App**: 메인 컴포넌트 (ProductList + ProductForm 포함)
+
+## Docker 구성
+- **backend**: OpenJDK 17 기반
+- **frontend**: Node.js 18 기반  
+- **database**: PostgreSQL 15
+
+## 개발 가이드라인
+
+### Backend 개발시
+- Spring Boot 3.x 사용
+- application.yml로 설정 관리
+- JPA Repository 패턴 사용
+- CORS 설정으로 프론트엔드 연동
+- 예외 처리 포함
+- Gradle 빌드 설정
+
+### Frontend 개발시  
+- 함수형 컴포넌트 + Hooks 사용
+- Axios로 API 통신
+- 간단한 CSS 스타일링
+- 에러 처리 포함
+- 상품 추가 후 목록 자동 갱신
+
+### Docker 관련
+- 멀티스테이지 빌드 사용
+- 개발용 docker-compose 구성
+- 포트: frontend(3000), backend(8080), db(5432)
+- 볼륨 마운트로 개발 편의성 제공
+- **모든 Docker 관련 파일에 아주 자세한 주석 포함**
+  - docker-compose.yml: 각 서비스, 환경변수, 볼륨, 포트의 역할 설명
+  - Dockerfile: 각 단계별 목적과 최적화 이유 설명
+  - 초보자도 이해할 수 있도록 상세한 설명 추가
+
+## 명령어 예시
+```bash
+# 프로젝트 시작
+docker-compose up -d
+
+# 로그 확인  
+docker-compose logs -f [service-name]
+
+# 중지
+docker-compose down
+
+# 재빌드
+docker-compose up --build
+```
+
+## 파일 생성 우선순서
+1. **프로젝트 루트 파일들** (.gitignore, docker-compose.yml, README.md)
+2. **Backend 기본 구조** (build.gradle, 메인 클래스, 설정)
+3. **Backend 엔티티 및 Repository**
+4. **Backend Controller 및 Service**  
+5. **Backend Dockerfile**
+6. **Frontend 기본 구조** (package.json, 메인 컴포넌트)
+7. **Frontend API 서비스 및 컴포넌트들**
+8. **Frontend Dockerfile**
+
+## 루트 파일 생성 요구사항
+
+### .gitignore
+- Java, Node.js, Docker, IDE 관련 파일들 모두 포함
+- 빌드 파일, 로그 파일, 환경 변수 파일 제외
+- OS별 시스템 파일 제외
+
+### docker-compose.yml  
+- PostgreSQL, Backend, Frontend 3개 서비스 구성
+- 환경변수로 DB 연결 정보 설정
+- 볼륨 마운트로 개발 편의성 제공
+- 포트 매핑: DB(5432), Backend(8080), Frontend(3000)
+- 서비스 간 의존성 설정
+- **아주 자세한 주석 포함** (각 설정의 목적과 역할 설명)
+
+### README.md
+- 프로젝트 소개 및 기술 스택
+- 실행 방법 (Docker Compose + 개별 실행)
+- API 엔드포인트 문서화
+- 접속 URL 안내
+- 프로젝트 구조 설명
+
+## 주의사항
+- Java 17 문법 사용
+- Spring Boot 3.x 의존성 사용
+- React 18 기능 활용
+- PostgreSQL 연결 설정 정확히 구성
+- CORS 정책 적절히 설정
+- 에러 핸들링 포함
+- **모든 Docker 관련 파일에는 초보자도 이해할 수 있는 아주 상세한 주석 필수**
+
+## 첫 번째 작업 지시사항
+프로젝트 루트에 다음 3개 파일을 먼저 생성해주세요:
+1. `.gitignore` - 모든 개발 관련 파일 제외 설정
+2. `docker-compose.yml` - 3개 서비스 구성 + 상세한 주석
+3. `README.md` - 프로젝트 소개 및 사용법
+
+이 가이드에 따라 단계별로 파일을 생성하고 구현해주세요.

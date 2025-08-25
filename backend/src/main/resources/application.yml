@@ -1,0 +1,172 @@
+# =====================================================
+# Spring Boot 애플리케이션 설정 파일
+# =====================================================
+# 이 파일은 애플리케이션의 다양한 설정을 관리합니다.
+# 환경별로 다른 설정을 사용할 수 있도록 프로필을 분리할 수 있습니다.
+
+# 서버 설정
+server:
+  # 애플리케이션이 실행될 포트를 설정합니다.
+  port: 8080
+  # 서버의 컨텍스트 경로를 설정합니다 (기본값: /).
+  servlet:
+    context-path: /
+
+# Spring 애플리케이션 설정
+spring:
+  # 애플리케이션의 이름을 설정합니다.
+  application:
+    name: Simple Shop Backend
+  
+  # 데이터베이스 연결 설정
+  datasource:
+    # 데이터베이스 연결 URL
+    # jdbc:postgresql://호스트:포트/데이터베이스명
+    url: jdbc:postgresql://localhost:5432/simple_shop
+    # 데이터베이스 사용자 이름
+    username: shop_user
+    # 데이터베이스 비밀번호
+    password: shop_password
+    # 데이터베이스 드라이버 클래스명
+    driver-class-name: org.postgresql.Driver
+    
+    # HikariCP 커넥션 풀 설정 (기본값 사용)
+    hikari:
+      # 최대 커넥션 풀 크기
+      maximum-pool-size: 10
+      # 최소 커넥션 풀 크기
+      minimum-idle: 5
+      # 커넥션 타임아웃 (밀리초)
+      connection-timeout: 30000
+      # 유휴 커넥션 타임아웃 (밀리초)
+      idle-timeout: 600000
+      # 커넥션 최대 수명 (밀리초)
+      max-lifetime: 1800000
+  
+  # JPA (Java Persistence API) 설정
+  jpa:
+    # Hibernate 설정
+    hibernate:
+      # 데이터베이스 스키마 생성 전략
+      # create: 애플리케이션 시작 시 테이블을 새로 생성 (기존 데이터 삭제)
+      # create-drop: 애플리케이션 시작 시 테이블 생성, 종료 시 삭제
+      # update: 기존 테이블에 변경사항만 적용
+      # validate: 테이블 스키마 검증만 수행
+      # none: 아무 작업도 수행하지 않음
+      ddl-auto: create-drop
+    
+    # JPA 속성 설정
+    properties:
+      hibernate:
+        # SQL 쿼리를 콘솔에 출력할지 여부 (개발 시 유용)
+        show_sql: true
+        # SQL 쿼리의 파라미터 값을 콘솔에 출력할지 여부
+        format_sql: true
+        # SQL 쿼리를 보기 좋게 포맷팅할지 여부
+        use_sql_comments: true
+        # 데이터베이스 방언 설정 (PostgreSQL 사용)
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        # JPA 쿼리 결과를 캐시할지 여부
+        cache:
+          use_second_level_cache: false
+          use_query_cache: false
+    
+    # JPA 설정
+    # 데이터베이스 플랫폼을 명시적으로 지정
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    # 엔티티 스캔을 활성화할 패키지를 지정
+    packages-to-scan: com.shop.entity
+    # JPA 쿼리 결과를 캐시할지 여부
+    cache:
+      use_second_level_cache: false
+      use_query_cache: false
+  
+  # 로깅 설정
+  logging:
+    # 로그 레벨 설정
+    level:
+      # 루트 로그 레벨
+      root: INFO
+      # Spring 프레임워크 로그 레벨
+      org.springframework: INFO
+      # Hibernate 로그 레벨
+      org.hibernate: INFO
+      # JPA 로그 레벨
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+      # 애플리케이션 패키지 로그 레벨
+      com.shop: DEBUG
+      # SQL 쿼리 로그 레벨
+      org.springframework.jdbc: DEBUG
+    
+    # 로그 파일 설정
+    file:
+      # 로그 파일의 경로와 이름
+      name: logs/simple-shop-backend.log
+      # 로그 파일의 최대 크기
+      max-size: 10MB
+      # 보관할 로그 파일의 개수
+      max-history: 30
+
+# =====================================================
+# 프로필별 설정
+# =====================================================
+# 개발 환경에서는 create-drop을 사용하여 테이블을 자동으로 생성하고,
+# 운영 환경에서는 validate를 사용하여 스키마 검증만 수행합니다.
+
+---
+# Docker 환경용 프로필
+spring:
+  config:
+    activate:
+      on-profile: docker
+  
+  datasource:
+    # Docker Compose에서 정의한 서비스 이름을 호스트명으로 사용
+    url: jdbc:postgresql://database:5432/simple_shop
+    username: shop_user
+    password: shop_password
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+---
+# 개발 환경용 프로필
+spring:
+  config:
+    activate:
+      on-profile: dev
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/simple_shop
+    username: shop_user
+    password: shop_password
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+---
+# 운영 환경용 프로필
+spring:
+  config:
+    activate:
+      on-profile: prod
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/simple_shop
+    username: shop_user
+    password: shop_password
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  
+  logging:
+    level:
+      root: WARN
+      com.shop: INFO

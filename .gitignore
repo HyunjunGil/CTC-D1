@@ -1,0 +1,97 @@
+# Java 관련 파일들
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+# Gradle 관련 파일들
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Maven 관련 파일들 (혹시 사용할 경우)
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Node.js 관련 파일들
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# React 관련 파일들
+build/
+dist/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+
+# 환경 변수 파일들
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE 관련 파일들
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Docker 관련 파일들
+.dockerignore
+
+# 로그 파일들
+*.log
+logs/
+
+# 임시 파일들
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# OS별 시스템 파일들
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Spring Boot 관련 파일들
+application-*.yml
+!application.yml
+!application-example.yml
+
+# 테스트 관련 파일들
+coverage/
+.nyc_output/
+.coverage
+htmlcov/
+
+# 패키지 매니저 관련 파일들
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
