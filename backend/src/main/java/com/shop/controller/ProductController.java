@@ -23,7 +23,6 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = "*") // CORS 설정 (개발 환경용)
 public class ProductController {
 
     // =====================================================
