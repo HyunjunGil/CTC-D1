@@ -6,8 +6,10 @@ import axios from 'axios';
 // 이 파일은 Backend API와의 모든 HTTP 통신을 담당합니다.
 // Axios를 사용하여 RESTful API 호출을 처리합니다.
 
-// API 기본 설정
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+// API 기본 설정 - 프록시 기반으로 변경
+// 로컬 개발: Vite 개발서버 프록시가 /api를 backend로 라우팅
+// Docker 환경: nginx 프록시가 /api를 backend 컨테이너로 라우팅
+const API_BASE_URL = '';
 
 // Axios 인스턴스 생성
 const apiClient = axios.create({

@@ -26,8 +26,8 @@ RUN npm ci --only=production && npm cache clean --force
 # 소스 코드 복사
 COPY . .
 
-# React 애플리케이션 빌드
-# build 폴더에 최적화된 정적 파일들이 생성됩니다.
+# Vite 애플리케이션 빌드
+# dist 폴더에 최적화된 정적 파일들이 생성됩니다.
 RUN npm run build
 
 # =====================================================
@@ -43,7 +43,7 @@ FROM nginx:alpine AS production
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # 빌드 스테이지에서 생성된 정적 파일들을 Nginx의 기본 디렉토리로 복사
-COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
 # Nginx 사용자 권한 설정
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
@@ -76,10 +76,10 @@ RUN npm install
 COPY . .
 
 # 개발 서버 포트 노출
-EXPOSE 3000
+EXPOSE 5173
 
-# 개발 서버 시작 (핫 리로드 활성화)
-CMD ["npm", "start"]
+# 개발 서버 시작 (핫 리로드 활성화, 모든 인터페이스에서 접근 가능)
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 
 # =====================================================
 # 환경 변수 및 메타데이터

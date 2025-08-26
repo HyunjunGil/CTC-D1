@@ -179,19 +179,17 @@ services:
     # 이 값들은 React 애플리케이션 설정에 사용됩니다.
     environment:
       # React 애플리케이션이 개발 모드로 실행되도록 설정합니다.
-      NODE_ENV: "development"
-      # 백엔드 API 서버의 URL을 설정합니다.
-      # backend는 위에서 정의한 Spring Boot 서비스의 이름입니다.
-      REACT_APP_API_URL: "http://localhost:8080/api"
       # 애플리케이션 제목을 설정합니다.
       REACT_APP_TITLE: "Simple Shop"
-      # 개발 서버 포트를 설정합니다.
-      PORT: "3000"
+      # Vite 개발 서버 포트를 설정합니다.
+      VITE_PORT: "5173"
+      # Vite가 모든 인터페이스에서 접근 가능하도록 설정합니다.
+      VITE_HOST: "0.0.0.0"
     
     # 컨테이너 내부의 포트를 호스트 시스템의 포트와 연결합니다.
-    # 3000은 React 개발 서버의 기본 포트입니다.
+    # 5173은 Vite 개발 서버의 기본 포트입니다.
     ports:
-      - "3000:3000"
+      - "5173:5173"
     
     # 소스 코드 변경을 실시간으로 반영하기 위한 볼륨 마운트를 설정합니다.
     volumes:
@@ -214,7 +212,7 @@ services:
     # 컨테이너가 완전히 시작될 때까지 기다리는 조건을 설정합니다.
     healthcheck:
       # HTTP 요청으로 애플리케이션이 준비되었는지 확인합니다.
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
       interval: 30s
       timeout: 10s
       retries: 3

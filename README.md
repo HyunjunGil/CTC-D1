@@ -28,6 +28,7 @@ simple-shop/
 │   │   ├── App.js                 # 메인 앱 컴포넌트
 │   │   └── index.js               # 진입점
 │   ├── package.json               # Node.js 의존성 및 스크립트
+│   ├── vite.config.js             # Vite 개발서버 프록시 설정
 │   └── Dockerfile                 # 프론트엔드 컨테이너 설정
 ├── docker-compose.yml            # 전체 서비스 구성 파일
 ├── .gitignore                    # Git 제외 파일 설정
@@ -45,6 +46,7 @@ simple-shop/
 
 ### Frontend
 - **React 18** - 사용자 인터페이스 구축을 위한 JavaScript 라이브러리
+- **Vite** - 빠른 개발 서버 및 빌드 도구
 - **Axios** - HTTP 클라이언트 라이브러리
 - **CSS3** - 스타일링
 
@@ -166,12 +168,14 @@ cd backend
 ./gradlew bootRun
 ```
 
-#### Frontend 실행
+#### Frontend 실행 (Vite 개발서버)
 ```bash
 cd frontend
 npm install
-npm start
+npm run dev
 ```
+
+**프록시 설정**: Vite 개발서버가 `/api` 요청을 `http://localhost:8080`으로 자동 프록시합니다.
 
 #### Database 설정
 - PostgreSQL 15 설치
