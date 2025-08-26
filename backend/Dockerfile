@@ -13,7 +13,7 @@
 # 사용할 베이스 이미지를 지정합니다.
 # OpenJDK 17을 사용하여 Java 17 애플리케이션을 실행할 수 있습니다.
 # alpine 리눅스는 가벼운 리눅스 배포판으로 이미지 크기를 줄여줍니다.
-FROM openjdk:17-jdk-alpine AS build
+FROM eclipse-temurin:17-jdk AS build
 
 # 메타데이터를 설정합니다 (선택사항이지만 권장).
 LABEL maintainer="Simple Shop Team"
@@ -26,13 +26,13 @@ WORKDIR /app
 
 # 시스템 패키지를 업데이트하고 필요한 도구들을 설치합니다.
 # --no-cache 옵션을 사용하여 패키지 캐시를 저장하지 않아 이미지 크기를 줄입니다.
-RUN apk update && \
-    apk add --no-cache \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     curl \
     wget \
     unzip \
     bash \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/lib/apt/lists/*
 
 # Gradle Wrapper를 다운로드합니다.
 # Gradle Wrapper는 프로젝트에 포함된 Gradle 버전을 사용할 수 있게 해줍니다.
@@ -74,7 +74,7 @@ RUN ./gradlew bootJar --no-daemon --stacktrace
 # 사용할 베이스 이미지를 지정합니다.
 # OpenJDK 17 JRE를 사용하여 Java 애플리케이션을 실행합니다.
 # JRE는 JDK보다 작으며, 컴파일 도구가 포함되지 않아 보안상 안전합니다.
-FROM openjdk:17-jre-alpine AS runtime
+FROM eclipse-temurin:17-jre AS runtime
 
 # 메타데이터를 설정합니다.
 LABEL maintainer="Simple Shop Team"
@@ -126,22 +126,22 @@ ENTRYPOINT ["java", \
 # 이 단계는 개발 환경에서 사용할 수 있는 추가 도구가 포함된 이미지입니다.
 # 디버깅이나 모니터링이 필요한 경우에만 사용합니다.
 
-FROM openjdk:17-jdk-alpine AS development
+FROM eclipse-temurin:17-jdk AS development
 
 # 메타데이터를 설정합니다.
 LABEL maintainer="Simple Shop Team"
 LABEL description="Simple Shop Backend Development Environment"
 LABEL version="1.0.0"
 
-# 개발 도구들을 설치합니다.
-RUN apk update && \
-    apk add --no-cache \
-    curl \
-    wget \
-    vim \
-    htop \
-    procps \
-    && rm -rf /var/cache/apk/*
+    # 개발 도구들을 설치합니다.
+    RUN apt-get update && \
+        apt-get install -y --no-install-recommends \
+        curl \
+        wget \
+        vim \
+        htop \
+        procps \
+        && rm -rf /var/lib/apt/lists/*
 
 # 작업 디렉토리를 설정합니다.
 WORKDIR /app
