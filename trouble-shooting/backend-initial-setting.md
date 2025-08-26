@@ -273,6 +273,79 @@ docker-compose up --build -d
 
 ---
 
+## 🚨 **문제 5: CORS (Cross-Origin Resource Sharing) 에러**
+
+### **문제 상황**
+```
+java.lang.IllegalArgumentException: When allowCredentials is true, allowedOrigins cannot contain the special value "*" since that cannot be set on the "Access-Control-Allow-Origin" response header. To allow credentials to a set of origins, list them explicitly or consider using "allowedOriginPatterns" instead.
+```
+
+Frontend(`localhost:3000`)에서 Backend(`localhost:8080`)로 API 호출 시 CORS 에러가 발생하여 요청이 차단됨.
+
+### **발생 원인**
+1. **CORS 설정 충돌**: `CorsConfig`와 `@CrossOrigin` 어노테이션이 동시에 존재
+2. **잘못된 CORS 설정**: `allowCredentials(true)`와 `allowedOrigins("*")`를 동시 사용
+3. **중복 설정**: 여러 개의 CORS 설정 Bean이 충돌
+
+### **해결 방법**
+
+#### **1단계: ProductController에서 @CrossOrigin 제거**
+```java
+// 변경 전
+@RestController
+@RequestMapping("/api/products")
+@CrossOrigin(origins = "*") // CORS 설정 (개발 환경용)
+public class ProductController {
+
+// 변경 후
+@RestController
+@RequestMapping("/api/products")
+public class ProductController {
+```
+
+#### **2단계: CorsConfig 단순화**
+```java
+@Configuration
+public class CorsConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("http://localhost:*", "http://127.0.0.1:*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
+    }
+}
+```
+
+#### **3단계: Backend 재시작**
+```bash
+# 현재 실행 중인 Backend 중지 (Ctrl+C)
+# 다시 실행
+cd backend
+./gradlew bootRun
+```
+
+### **핵심 포인트**
+1. **`allowCredentials(true)` 사용 시**: `allowedOrigins("*")` 대신 `allowedOriginPatterns("http://localhost:*")` 사용
+2. **중복 설정 방지**: 하나의 전역 CORS 설정만 사용
+3. **개발 환경 고려**: `localhost`와 `127.0.0.1`의 모든 포트 허용
+
+### **해결 결과**
+- Frontend에서 Backend로의 API 호출이 정상적으로 작동
+- CORS 에러 메시지가 더 이상 발생하지 않음
+- 브라우저에서 Cross-Origin 요청이 성공적으로 처리됨
+
+### **학습 포인트**
+1. **CORS 정책 이해**: `allowCredentials`와 `allowedOrigins`의 상호 배타성
+2. **설정 단순화**: 복잡한 Bean 설정보다 단순한 WebMvcConfigurer 구현이 효과적
+3. **개발 환경 설정**: 로컬 개발 환경에 적합한 CORS 정책 설계
+4. **재시작 필요성**: CORS 설정 변경 후 애플리케이션 재시작 필수
+
+---
+
 **마지막 업데이트:** 2025-08-26  
 **작성자:** Simple Shop Development Team  
 **버전:** 1.0.0
