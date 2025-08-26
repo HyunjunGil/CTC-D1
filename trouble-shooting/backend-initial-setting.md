@@ -205,6 +205,74 @@ ALTER DATABASE simple_shop OWNER TO shop_user;
 
 ---
 
+## 🚨 **문제 4: Docker Compose Health Check 실패**
+
+### **문제 상황**
+```
+simple-shop-backend   ctc-d1-backend   "java -Djava.securit…"   backend    7 minutes ago   Up 7 minutes (unhealthy)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+```
+
+Backend 컨테이너가 `unhealthy` 상태로 표시되어 Docker Compose에서 계속 waiting 상태가 됨.
+
+### **발생 원인**
+- Docker Compose의 health check가 `http://localhost:8080/actuator/health` 엔드포인트를 확인하려고 함
+- Spring Boot Actuator가 설정되지 않아서 해당 엔드포인트가 존재하지 않음
+- Health check 실패로 인해 컨테이너가 unhealthy 상태가 됨
+
+### **해결 방법**
+
+#### **1단계: HealthController 생성**
+```java
+@RestController
+public class HealthController {
+    
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, Object>> health() {
+        Map<String, Object> health = new HashMap<>();
+        health.put("status", "UP");
+        health.put("timestamp", System.currentTimeMillis());
+        health.put("service", "Simple Shop Backend");
+        health.put("version", "1.0.0");
+        
+        return ResponseEntity.ok(health);
+    }
+}
+```
+
+#### **2단계: Docker Compose Health Check URL 수정**
+```yaml
+# 변경 전
+test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+
+# 변경 후  
+test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+```
+
+#### **3단계: Backend 완전 재빌드**
+```bash
+docker-compose down
+docker-compose up --build -d
+```
+
+### **해결 결과**
+```json
+// http://localhost:8080/health 응답
+{
+  "service": "Simple Shop Backend",
+  "version": "1.0.0",
+  "status": "UP",
+  "timestamp": 1756170350597
+}
+```
+
+### **학습 포인트**
+1. **Health Check의 중요성**: Docker Compose에서 서비스 의존성 관리에 필수
+2. **엔드포인트 설계**: 단순하지만 효과적인 health check 엔드포인트 제공
+3. **재빌드 필요성**: 코드 변경 후 Docker 이미지 재빌드 필요
+4. **모니터링**: 컨테이너 상태를 지속적으로 모니터링하는 것의 중요성
+
+---
+
 **마지막 업데이트:** 2025-08-26  
 **작성자:** Simple Shop Development Team  
 **버전:** 1.0.0
