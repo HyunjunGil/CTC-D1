@@ -19,9 +19,8 @@ WORKDIR /app
 # 의존성 설치를 최적화하기 위해 먼저 복사합니다.
 COPY package*.json ./
 
-# 프로덕션 의존성만 설치 (devDependencies 제외)
-# npm ci를 사용하여 package-lock.json 기반으로 정확한 버전 설치
-RUN npm ci --only=production && npm cache clean --force
+# 모든 의존성 설치 (빌드에 필요한 devDependencies 포함)
+RUN npm install
 
 # 소스 코드 복사
 COPY . .

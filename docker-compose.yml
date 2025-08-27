@@ -162,6 +162,8 @@ services:
       context: ./frontend
       # 사용할 Dockerfile을 명시합니다.
       dockerfile: Dockerfile
+      # 프로덕션 스테이지 사용
+      target: production
       # 빌드 시 사용할 인수들을 설정합니다.
       args:
         # Node.js 버전을 18로 설정합니다.
@@ -187,9 +189,9 @@ services:
       VITE_HOST: "0.0.0.0"
     
     # 컨테이너 내부의 포트를 호스트 시스템의 포트와 연결합니다.
-    # 5173은 Vite 개발 서버의 기본 포트입니다.
+    # 3000번 포트로 매핑 (권한 문제 방지)
     ports:
-      - "5173:5173"
+      - "3000:80"
     
     # 소스 코드 변경을 실시간으로 반영하기 위한 볼륨 마운트를 설정합니다.
     volumes:
